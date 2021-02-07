@@ -30,6 +30,9 @@ class Key(object):
         self.prev = e
         return self.flag[0]
 
+
+
+
 ''' groupHMM
 Return a list of strings separating HMM state labels
 Input: String
@@ -37,17 +40,20 @@ Output: List of lists
 Output example: ['---','++','------','+','-------',...]
 '''
 def groupHMM(seq):
-    return [''.join(list(g)) for k,g in groupby(seq,key=Key())]
+    return [''.join(list(g)) for k,g in groupby(seq,key=Key())] # Key() refer to class Key(object) above
 
-''' kmersWithAmbigIndex
-Return list of kmers, indices of k-mers without ambiguity, and indices of those
-with ambiguity
-Input: string
-Output: List of string, list of indices, list of indices
+
+
+
+
+'''
+Combine all the data to create a dataframe
+E: emission matrix
+seqHits: ['GGCCCGGTGTGGTCGGCCTCATTTTGGATTACTTCGGTGGGCTTCTCCTCGG...', 'TCCGTGTGGATCGTTTCAGCACGGATC......'......]
 '''
 
 def hitOutput(seqHits,starts,ends,k,E,tHead,tSeq):
-    info = list(zip(seqHits,starts,ends))
+    info = list(zip(seqHits,starts,ends)) # example [('GGCCCGGTGTGGTCGGCCTCATTTTGGAT.......', 88, 177),......]
     dataDict = dict(zip(list(range(len(seqHits))),info))
     df = pd.DataFrame.from_dict(dataDict,orient='index')
     #calculate log-likelihood ratio of k-mers in the + model vs - model
@@ -61,6 +67,30 @@ def hitOutput(seqHits,starts,ends,k,E,tHead,tSeq):
 
     return df
 
+
+
+''' LLR
+Return log-likelihood ratio between two models in HMM for + k-mers
+Input: sequnce of hits, value of k, k-mer frequencies in HMM emmission matrix
+Output: Array of LLRs for each hit
+
+hits = seqHits: ['GGCCCGGTGTGGTCGGCCTCATTTTGGATTACTTCGGTGGGCTTCTCCTCGG...', 'TCCGTGTGGATCGTTTCAGCACGGATC......'......]
+'''
+def LLR(hits,k,E):
+    arr = np.zeros(len(hits))
+    for i,hit in enumerate(hits):
+        LLRPos,LLRNeg=0,0
+        for j in range(len(hit)-k+1):
+            kmer=hit[j:j+k]
+            LLRPos += E['+'][kmer]
+            LLRNeg += E['-'][kmer]
+        llr = LLRPos-LLRNeg
+        arr[i] = llr
+    return arr
+
+
+
+
 def transcriptOutput(seqHits,starts,ends,k,E,tHead,tSeq):
 
     sumHits = LLR(seqHits,k,E)
@@ -73,34 +103,30 @@ def transcriptOutput(seqHits,starts,ends,k,E,tHead,tSeq):
     df.columns = ['sumLLR','totalLenHits','fracTranscriptHit','longestHit','seqName']
 
     return df
+
+
+
+
+''' kmersWithAmbigIndex
+Return list of kmers, indices of k-mers without ambiguity, and indices of those
+with ambiguity
+Input: string
+Output: List of string, list of indices, list of indices
+'''
 def kmersWithAmbigIndex(tSeq,k):
     O = [tSeq[i:i+k].upper() for i in range(0,len(tSeq)-k+1)]
-    O = [o for o in O if 'N' not in o]
+    O = [o for o in O if 'N' not in o]  # example: when k=4, O is something like ['GGAC', 'GACA', 'ACAG', 'CAGC', 'AGCA',...]
     # Match k-mers without ambig char to index in original string
-    oIdx = [i for i in range(0,len(tSeq)-k+1) if 'N' not in tSeq[i:i+k]]
+    oIdx = [i for i in range(0,len(tSeq)-k+1) if 'N' not in tSeq[i:i+k]] # example: when k=4, oIdx is something like [0, 1, 2, 3, 4, 5, 6, 7, 8, 9...]
     # Match k-mers with ambig char to index in original string
     nBP = [i for i in range(0,len(tSeq)-k+1) if 'N' in tSeq[i:i+k]]
     # zip the indices with marker character N
-    nBP = list(zip(nBP,['N']*len(nBP)))
+    nBP = list(zip(nBP,['N']*len(nBP))) # example. nBP is something like [(36, 'N'), (111, 'N'), (300, 'N').....]
     return O, oIdx, nBP
 
-''' LLR
-Return log-likelihood ratio between two models in HMM for + k-mers
-Input: sequnce of hits, value of k, k-mer frequencies in HMM emmission matrix
-Output: Array of LLRs for each hit
-'''
 
-def LLR(hits,k,E):
-    arr = np.zeros(len(hits))
-    for i,hit in enumerate(hits):
-        LLRPos,LLRNeg=0,0
-        for j in range(len(hit)-k+1):
-            kmer=hit[j:j+k]
-            LLRPos += E['+'][kmer]
-            LLRNeg += E['-'][kmer]
-        llr = LLRPos-LLRNeg
-        arr[i] = llr
-    return arr
+
+
 
 def getFwd(seqHits,A,pi,states,E,k,alphabet):
     fwdPs = []
@@ -114,18 +140,36 @@ def getFwd(seqHits,A,pi,states,E,k,alphabet):
         fwdPs.append(fP)
     return fwdPs
 
+
+
+
+
+'''
+Process raw results to find out the break point of the original sequence then break it to corresponding query reads or null reads fragments based on groupedHits. 
+Also the start position and end position of each fragments in the original sequence are recorded.
+
+From:
+groupedHits: ['-----','++++++++++','-','++++','------------']
+tSeq: 'AGGAGGAACAGTTGCCTCAGCACGTCTGCGCAGCTTTCCTTGCGGCGCCCCTCCGCGTGG......'
+
+to:
+seqHits: ['GGCCCGGTGTGGTCGGCCTCATTTTGGATTACTTCGGTGGGCTTCTCCTCGG...', 'TCCGTGTGGATCGTTTCAGCACGGATC......'......]
+starts: [   88   498   835  5614 14919 15366 19473 22753 69402 69556.....]
+ends: [  177   627   999  5636 14971 15388 19502 22776 69436 69605.......]
+'''
 def formatHits(groupedHits,k,tSeq):
     idx = 0
     indexGroupHits = []
     # Loop below formats the hmm output as such:
     # [([0,1,2]),'---'),([3,4],'++'),([5],'-'),...]
     # Grouping HMM states with their correct index in the list of k-mers
-    for i,group in enumerate(groupedHits):
+    for i,group in enumerate(groupedHits):   # groupedHits example ['-----','++++++++++','-','++++','------------']
         indexGroupHits.append([])
         for kmer in group:
             indexGroupHits[i].append(idx)
             idx+=1
-    hits = list(zip(indexGroupHits,groupedHits))
+    hits = list(zip(indexGroupHits,groupedHits)) # hits example [([0,1,2]),'---'),([3,4],'++'),([5],'-'),...]
+    
     seqHits = []
     seqHitCoords = []
     for group in hits:
@@ -133,9 +177,16 @@ def formatHits(groupedHits,k,tSeq):
             start,end = group[0][0],group[0][-1]+k #convert k-mer coord to bp coord
             seqHitCoords.append(f'{start}:{end}')
             seqHits.append(tSeq[start:end])
-    starts = np.array([int(c.split(':')[0]) for c in seqHitCoords])
-    ends = np.array([int(c.split(':')[1]) for c in seqHitCoords])
+    # seqHits - squence hits base pair version - example: ['GGCCCGGTGTGGTCGGCCTCATTTTGGATTACTTCGGTGGGCTTCTCCTCGG...', 'TCCGTGTGGATCGTTTCAGCACGGATC......'......]
+    # tSeq example 'AGGAGGAACAGTTGCCTCAGCACGTCTGCGCAGCTTTCCTTGCGGCGCCCCTCCGCGTGG......'
+    # seqHitCoords example ['88:177', '498:627', '835:999', '5614:5636', '14919:14971', '15366:15388', '19473:19502', '22753:22776', '69402:69436', '69556:69605'......]
+    starts = np.array([int(c.split(':')[0]) for c in seqHitCoords]) # starts example [   88   498   835  5614 14919 15366 19473 22753 69402 69556.....]
+    ends = np.array([int(c.split(':')[1]) for c in seqHitCoords]) # ends example [  177   627   999  5636 14971 15388 19502 22776 69436 69605.......]
     return seqHits,starts,ends
+
+
+
+
 
 def transitionMatrix(kmers,k,alphabet):
     states = np.zeros((4**(int(k)-1), 4), dtype=np.float64)
@@ -161,31 +212,31 @@ def nucContent(nullSeqs,alphabet):
 def logLTbl(q,null):
     return np.log2(q) - np.log2(null)
 
+
+
+
 '''
 HMM: Generate dictionaries containing information necessary to perform the viterbi algorithm
 
-Inputs: qCounts - query count dictionary
-        nCounts - null count dictionary
+Inputs: qKCounts - Same certain length's Kmers' query count dictionary
+        nKCounts - Same certain length's Kmers' null count dictionary
         k - value of k
         alphabet - alphabet (ATCG)
-        m: + to + transition probability
-        n: - to - transition probability
+        m: + to + transition probability (query to query, query to null is 1-m)
+        n: - to - transition probability (null to null, null to query is 1-n)
 Returns:    A - Dictionary, Hidden state transition matrix
             E - Dictionary, Emission matrix, kmer counts
             state - tuple, list of states (+,-)
             pi - Dictionary, initial probability of being in + or -
-
-
 '''
-
-def HMM(qCounts,nCounts,k,alphabet,m,n):
+def HMM(qKCounts,nKCounts,k,alphabet,m,n):
     kmers = [''.join(p) for p in product(alphabet,repeat=k)]
     hmmDict = {}
-    countArr = np.array(list(qCounts.values()))
+    countArr = np.array(list(qKCounts.values()))
     # Convert raw counts to frequencies, then log probability
     hmmDict['+'] = np.log2(countArr/np.sum(countArr))
     #hmmDict['+'] = hmmDict['+'] - np.mean(hmmDict['+'])
-    countArr = np.array(list(nCounts.values()))
+    countArr = np.array(list(nKCounts.values()))
     # Convert raw counts to frequencies, then log probability
     hmmDict['-'] = np.log2(countArr/np.sum(countArr))
     #hmmDict['-'] = hmmDict['-'] - np.mean(hmmDict['-'])
@@ -195,6 +246,8 @@ def HMM(qCounts,nCounts,k,alphabet,m,n):
     A = {'+':{'+':np.log2(m),'-':np.log2(1-m)},'-':{'+':np.log2(1-n),'-':np.log2(n)}}
     E = {'+': dict(zip(kmers,hmmDict['+'])),'-':dict(zip(kmers,hmmDict['-']))}
     return A,E,states,pi
+
+
 
 
 '''
@@ -209,7 +262,6 @@ Inputs: O - list, observed sequence of k-mers
         pi - Dictionary, initial probability of being in + or -
 Returns:    backTrack - list, sequence of hidden states
 
-
 '''
 def viterbi(O,A,E,states,pi):
 
@@ -220,7 +272,7 @@ def viterbi(O,A,E,states,pi):
     N = len(O)
     # calculate initial probabilities in each state given the first kmer
     for state in states:
-        uk[0][state]=pi[state]+E[state][O[0]]
+        uk[0][state]=pi[state]+E[state][O[0]]  # uk[0]['+'] = np.log2(.5) +  E['+']['AAAA']
         ukprev[0][state] = None # previous state does not exist, set to None
     # Loop through observed sequence
     # For each state, calculate the cumulative probability recursively
@@ -253,6 +305,9 @@ def viterbi(O,A,E,states,pi):
     backtrack = backtrack[::-1] # reverse the order
     return backtrack
 
+
+
+
 '''
 The forward algorithm calculates the probability of being in state i at time t, given all observations from time 1 to t. 
 
@@ -264,8 +319,6 @@ The forward algorithm is also crucial for calculatating the likelihood of the ob
 P(Observed Sequence | Model) = sum probabilities at the end point (last observation) over all states, yielding the total probability
 of the observed sequence, given all current values of parameters. Sequences that better match the model will have higher probabilities
 than those that do not.
-
-
 
 Input: 
 A - transition matrix
