@@ -31,6 +31,12 @@ Input:
 Output:
     
     A new .mkv python pickle file (binary) that contains the original k-mer frequencies and updated transition matrix 
+----------------------------------------------------------------------------------------------------------------------
+arr: list
+    a numpy array
+    format example:
+    [[-0.00014428 -0.00631583 -0.06509471 -0.14060615]
+    [-0.00014428 -0.0002501  -0.0008716  -0.0014628 ]]
 
 '''
 
@@ -96,8 +102,8 @@ for i in tqdm(range(args.its)):
   
 # Data dictionary tracks the iterations of BW algorithm for manual inspection if necessary 
 
-arr = np.array(list(data.values()))
-arr = 2**arr
+arr = np.array(list(data.values())) 
+arr = 2**arr  # cuz later these numpy array values will be transformed by log2
 arr = arr.T
 np.savetxt(os.path.dirname(args.prior) +'/hmm_BWparameters.txt',arr,fmt='%.9f')
 if args.createfile:

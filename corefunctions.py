@@ -91,18 +91,18 @@ def LLR(hits,k,E):
 
 
 
-def transcriptOutput(seqHits,starts,ends,k,E,tHead,tSeq):
+# def transcriptOutput(seqHits,starts,ends,k,E,tHead,tSeq):
 
-    sumHits = LLR(seqHits,k,E)
-    lens = ends-starts # lengths of individual hits
-    df = pd.DataFrame([np.sum(sumHits)]) # sum of hits
-    df['totalLenHits'] = (np.sum(lens)) # sum of all hit lengths
-    df['fracTranscriptHit'] = df['totalLenHits']/len(tSeq) # fraction of transcript that is hit
-    df['longestHit'] = np.max(lens) # longest HMM hit
-    df['seqName'] = tHead
-    df.columns = ['sumLLR','totalLenHits','fracTranscriptHit','longestHit','seqName']
+#     sumHits = LLR(seqHits,k,E)
+#     lens = ends-starts # lengths of individual hits
+#     df = pd.DataFrame([np.sum(sumHits)]) # sum of hits
+#     df['totalLenHits'] = (np.sum(lens)) # sum of all hit lengths
+#     df['fracTranscriptHit'] = df['totalLenHits']/len(tSeq) # fraction of transcript that is hit
+#     df['longestHit'] = np.max(lens) # longest HMM hit
+#     df['seqName'] = tHead
+#     df.columns = ['sumLLR','totalLenHits','fracTranscriptHit','longestHit','seqName']
 
-    return df
+#     return df
 
 
 
@@ -128,17 +128,17 @@ def kmersWithAmbigIndex(tSeq,k):
 
 
 
-def getFwd(seqHits,A,pi,states,E,k,alphabet):
-    fwdPs = []
-    for hit in seqHits:
-        O = [hit[i:i+k].upper() for i in range(0,len(hit)-k+1)]
-        O = [o for o in O if 'N' not in o]
-        '''
-        forward algorithm to calculate log P(O|HMM)
-        '''
-        fP = fwd(O,A,pi,states,E,k,alphabet)
-        fwdPs.append(fP)
-    return fwdPs
+# def getFwd(seqHits,A,pi,states,E,k,alphabet):
+#     fwdPs = []
+#     for hit in seqHits:
+#         O = [hit[i:i+k].upper() for i in range(0,len(hit)-k+1)]
+#         O = [o for o in O if 'N' not in o]
+#         '''
+#         forward algorithm to calculate log P(O|HMM)
+#         '''
+#         fP = fwd(O,A,pi,states,E,k,alphabet)
+#         fwdPs.append(fP)
+#     return fwdPs
 
 
 
@@ -188,29 +188,29 @@ def formatHits(groupedHits,k,tSeq):
 
 
 
-def transitionMatrix(kmers,k,alphabet):
-    states = np.zeros((4**(int(k)-1), 4), dtype=np.float64)
-    stateKmers = [''.join(p) for p in product(alphabet,repeat=k-1)]
-    for i, currState in enumerate(stateKmers):
-        tot = 0
-        for j, nextState in enumerate(alphabet):
-            count = kmers[currState+nextState]
-            tot += count
-        if tot > 0:
-            for j, nextState in enumerate(alphabet):
-                states[i, j] = kmers[currState+nextState] / float(tot)
-    return states
+# def transitionMatrix(kmers,k,alphabet):
+#     states = np.zeros((4**(int(k)-1), 4), dtype=np.float64)
+#     stateKmers = [''.join(p) for p in product(alphabet,repeat=k-1)]
+#     for i, currState in enumerate(stateKmers):
+#         tot = 0
+#         for j, nextState in enumerate(alphabet):
+#             count = kmers[currState+nextState]
+#             tot += count
+#         if tot > 0:
+#             for j, nextState in enumerate(alphabet):
+#                 states[i, j] = kmers[currState+nextState] / float(tot)
+#     return states
 
-# calculate nucleotide content of a sequence... unused now
-def nucContent(nullSeqs,alphabet):
-    seqs = ''.join(nullSeqs)
-    seqs = seqs.upper()
-    freq = [seqs.count(nt)/len(seqs) for nt in alphabet]
-    return dict(zip(alphabet,freq))
+# # calculate nucleotide content of a sequence... unused now
+# def nucContent(nullSeqs,alphabet):
+#     seqs = ''.join(nullSeqs)
+#     seqs = seqs.upper()
+#     freq = [seqs.count(nt)/len(seqs) for nt in alphabet]
+#     return dict(zip(alphabet,freq))
 
-# Calculate the log2 odds table between two matrices
-def logLTbl(q,null):
-    return np.log2(q) - np.log2(null)
+# # Calculate the log2 odds table between two matrices
+# def logLTbl(q,null):
+#     return np.log2(q) - np.log2(null)
 
 
 
@@ -402,6 +402,8 @@ def bkw(O,A,pi,states,E):
 Baum-Welch EM parameter updates
 
 This is a custom implementation that only updates the transition matrix
+the BW algorithm calculates the expected number of "observations" of each hidden state i, as well as the expected number of "observed"
+transitions from each hidden state i to all possible states j
 
 '''
 def update(a,b,O,states,A,E):
