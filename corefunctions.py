@@ -222,14 +222,14 @@ Inputs: qKCounts - Same certain length's Kmers' query count dictionary
         nKCounts - Same certain length's Kmers' null count dictionary
         k - value of k
         alphabet - alphabet (ATCG)
-        m: + to + transition probability (query to query, query to null is 1-m)
-        n: - to - transition probability (null to null, null to query is 1-n)
+        qT: + to + transition probability (query to query, query to null is 1-qT)
+        nT: - to - transition probability (null to null, null to query is 1-nT)
 Returns:    A - Dictionary, Hidden state transition matrix
             E - Dictionary, Emission matrix, kmer counts
             state - tuple, list of states (+,-)
             pi - Dictionary, initial probability of being in + or -
 '''
-def HMM(qKCounts,nKCounts,k,alphabet,m,n):
+def HMM(qKCounts,nKCounts,k,alphabet,qT,nT):
     kmers = [''.join(p) for p in product(alphabet,repeat=k)]
     hmmDict = {}
     countArr = np.array(list(qKCounts.values()))
@@ -243,7 +243,7 @@ def HMM(qKCounts,nKCounts,k,alphabet,m,n):
 
     states = ('+','-')
     pi = {'+':np.log2(.5),'-':np.log2(.5)}
-    A = {'+':{'+':np.log2(m),'-':np.log2(1-m)},'-':{'+':np.log2(1-n),'-':np.log2(n)}}
+    A = {'+':{'+':np.log2(qT),'-':np.log2(1-qT)},'-':{'+':np.log2(1-nT),'-':np.log2(nT)}}
     E = {'+': dict(zip(kmers,hmmDict['+'])),'-':dict(zip(kmers,hmmDict['-']))}
     return A,E,states,pi
 

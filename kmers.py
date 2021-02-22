@@ -5,7 +5,7 @@ import os
 # from multiprocessing import pool
 from itertools import starmap
 from itertools import product
-from math import ceil
+#from math import ceil
 from seekr.fasta_reader import Reader
 
 '''
@@ -38,10 +38,10 @@ kDir: str
 
 #Load arguments, see help= for explanation
 parser = argparse.ArgumentParser()
-parser.add_argument('--fasta', type=str,help='Path to fasta file')
-parser.add_argument('--name',type=str,help='name for count file',default='out')
-parser.add_argument('--dir',type=str,help='directory to save output',default='./')
-parser.add_argument('-k',type=str,help='Comma delimited string of possible k-mer values',default='2,3,4')
+parser.add_argument('--fasta', type=str,help='Path to fasta file', required=True)
+parser.add_argument('--name',type=str,help='name for count file',default='out', required=True)
+parser.add_argument('--dir',type=str,help='directory to save output',default='./', required=True)
+parser.add_argument('-k',type=str,help='Comma delimited string of possible k-mer values', required=True)
 parser.add_argument('-a',type=str,help='String, Alphabet to generate k-mers (e.g. ATCG); default=ATCG',default='ATCG')
 # parser.add_argument('-n',type=int,help='Number of CPU cores. Each job corresponds to a value of k, and the program scales well with multiprocessing',default=1)
 
@@ -82,5 +82,5 @@ if __name__ == '__main__':
     kDir = args.dir
     if not kDir.endswith('/'):
         kDir+='/'
-    pickle.dump(dataDict,open(f'{kDir}{args.name}.kmct','wb'))
+    pickle.dump(dataDict,open(f'{kDir}{args.name}.dict','wb'))
 

@@ -118,10 +118,10 @@ def hmmCalc(data):
 
 # input commands
 parser = argparse.ArgumentParser()
-parser.add_argument("--model",type=str,help='Path to .mkv file output from train.py or bw.py')
-parser.add_argument("-k",type=int,help='Value of k to use')
-parser.add_argument('--db',type=str,help='Path to fasta file with sequences to calculate similarity score')
-parser.add_argument('--prefix',type=str,help='String, Output file name;default=None')
+parser.add_argument("--model",type=str,help='Path to .mkv file output from train.py or bw.py', required=True)
+parser.add_argument("-k",type=int,help='Value of k to use', required=True)
+parser.add_argument('--db',type=str,help='Path to fasta file with sequences to calculate similarity score', required=True)
+parser.add_argument('--prefix',type=str,help='String, Output file name;default=None', required=True)
 #parser.add_argument('--bkg',type=str,help='Path to fasta file from which to calculate background nucleotide frequencies, if not passed default is uniform',default=None)
 parser.add_argument('-a',type=str,help='String, Alphabet to generate k-mers (e.g. ATCG); default=ATCG',default='ATCG')
 #parser.add_argument('-n',type=int,help='Integer 1 <= n <= max(cores), Number of processor cores to use; default = 1. This scales with the number of sequence comparisons in --db',default=1)
@@ -132,7 +132,7 @@ args = parser.parse_args()
 
 if __name__ == '__main__':
 
-    alphabet = list(args.a)
+    # unused cmd? alphabet = list(args.a)
     #Loop over values of k
     args.a = args.a.upper()
     model = args.model
@@ -144,7 +144,7 @@ if __name__ == '__main__':
     k = int(log(len(hmm['E']['+'].keys()),len(args.a)))
     assert k == args.k, 'Value of k provided does not match supplied hmm file'
 
-    kmers = [''.join(p) for p in product(alphabet,repeat=k)] # generate k-mers
+    # unused command? kmers = [''.join(p) for p in product(alphabet,repeat=k)] # generate k-mers
     target = Reader(args.db)
     targetSeqs,targetHeaders = target.get_seqs(),target.get_headers()
     targetMap = defaultdict(list)
