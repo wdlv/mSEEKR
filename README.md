@@ -132,7 +132,7 @@ Output:
 
 
 
-## Find HMM state path through sequences of interest and seekr pearson correlation score
+## Find HMM state path through sequences of interest
 
   1. Run the mSEEKR command
 ```
