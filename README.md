@@ -148,6 +148,7 @@ Parameters
 5. --prefix : file name for output, useful to include information about the experiment
 
 
+## Calculate seekr pearson correlation score
 
   2. Run the getSeekrScore command
   ```
