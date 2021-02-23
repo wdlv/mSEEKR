@@ -50,8 +50,8 @@ conda install -c anaconda cython
   1. Curate unique fasta files for queries and null model before hand
   2. Use the following command
 ```
-  python kmers.py --fasta ./fastaFiles/mA.fa -k 2,3,4 --name mouseA -n 3 --dir ./counts/
-  python kmers.py --fasta ./fastaFiles/gencode.vM17.lncRNA_transcripts.fa -k 2,3,4 --name mm10Trscpts -n 3 --dir ./counts/
+  python kmers.py --fasta ./fastaFiles/mA.fa -k 2,3,4 --name mouseA --dir ./counts/
+  python kmers.py --fasta ./fastaFiles/gencode.vM17.lncRNA_transcripts.fa -k 2,3,4 --name mm10Trscpts --dir ./counts/
 ```
 
 #### Parameters:
@@ -59,8 +59,7 @@ conda install -c anaconda cython
 1. --fasta : path to fasta file
 2. -k : comma separated list of values of k
 3. --name : name to give output file
-4. -n : number of processing cores to use (scales with value of k -- so should be less than or equal to number of k values specified)
-5. --dir : output directory 
+4. --dir : output directory 
 
 
   Output:
