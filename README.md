@@ -33,6 +33,10 @@ conda install -c anaconda cython
 
 #### Type following commands in desired directory
 ```
+  The mSEEKR package has used functions from seekr so please install the seekr package first.
+  It is lcoated at https://github.com/CalabreseLab/seekr
+  
+  Then lets install mSEEKR package:
 	git clone https://github.com/spragud2/mSEEKR.git
 	cd mSEEKR/
 	python setup.py build_ext --inplace
@@ -71,7 +75,7 @@ conda install -c anaconda cython
   1. Run the following command
 ```
   mv *skr counts/
-  python train.py --query ./counts/mouseA.skr --null ./counts/mm10Trscpts.skr -k 2,3,4 --qPrefix mouseA --nPrefix mm10Trscpts --qT .9999 --nT .9999 --dir ./markovModels/
+  python train.py --query ./counts/mouseA.dict --null ./counts/mm10Trscpts.dict -k 2,3,4 --qPrefix mouseA --nPrefix mm10Trscpts --qT .9999 --nT .9999 --dir ./markovModels/
 ```
 
 Parameters:
@@ -93,11 +97,11 @@ Parameters:
     |
     |--- mouseA_mouseNull
     |------- 2
-    |------------- hmm.mkv
+    |------------- hmm.dict
     |------- 3
-    |------------- hmm.mkv
+    |------------- hmm.dict
     |------- 4
-    |------------- hmm.mkv
+    |------------- hmm.dict
     |--- mouseB_mouseNull
     .
     .
@@ -108,7 +112,7 @@ This script will take the output .mkv output file from train.py and find an MLE 
 
   1. Run the following command
 ```
-  python bw.py -k 4 --db ./fastaFiles/xist.fa --prior markovModels/mouseA_mm10Trscpts/4/hmm.mkv --its 3 -cf
+  python bw.py -k 4 --db ./fastaFiles/xist.fa --prior markovModels/mouseA_mm10Trscpts/4/hmm.dict --its 3 -cf
 ```
 
 The above command takes the HMM trained on repeat A at k =4, and uses Xist to find an MLE for the transition parameters. More than one sequence can be provided as training, if a multi-entry FASTA file is provided. 
@@ -130,16 +134,28 @@ Output:
 
 ## Find HMM state path through sequences of interest
 
-  1. Run the following command
+  1. Run the mSEEKR command
 ```
-  python mSEEKR.py --db ./fastaFiles/mm10kcn.fa -n 8 --prefix kcn_queryMouseA --model ./markovModels/mouseA_mm10Trscpts/4/hmm_MLE.mkv -k 4 --fasta
+  python mSEEKR.py --db ./fastaFiles/mm10kcn.fa --prefix kcn_queryMouseA --model ./markovModels/mouseA_mm10Trscpts/4/hmm_MLE.dict -k 4 --fasta
 ```
 
   Parameters
 
   1. --db : sequences of interest to run the HMM on
-  2. --model : Path to .mkv file output from train.py or bw.py
+  2. --model : Path to .dict file output from train.py or bw.py
   3. -k : value of k to use in the analysis (must have been specified in training)
   4. -n : Number of processing cores to use. Scales with size of fasta file (# of entries, not sequence length)
   5. --prefix : file name for output, useful to include information about the experiment
+
+  2. Run the getSeekrScore command
+'''
+  python getSeekrScore.py --queryFasta ./fastaFiles/mA.fa --backgroundFasta ./fastaFiles/gencode.vM17.lncRNA_transcripts.fa --mSEEKRdataframeDir ./kcn_queryMouseA_4_viterbi.txt -k 4 
+'''
+  Parameters
+
+  1. --queryFasta : query fasta files used at the beginning
+  2. --backgroundFasta : lncRNA background sequences fasta file; used to calculate mean and standard deviation for each k-mer
+  3. --mSEEKRdataframeDir : directory to read in the output dataframe generated from command python mSEEKR.py
+  4. -k : The same k value used in the python mSEEKR.py step
+  5. --dir : Directory to save output seekr score dataframe
   

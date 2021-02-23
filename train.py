@@ -125,7 +125,7 @@ for k in kVals:
         if not os.path.exists(kDir):
             os.mkdir(kDir)
         A,E,states,pi = corefunctions.HMM(qKCount,nKCount,k,args.a,args.qT,args.nT)
-        kmers = [''.join(p) for p in itertools.product(alphabet,repeat=k)]
+        # kmers = [''.join(p) for p in itertools.product(alphabet,repeat=k)]
         # queryMkv = corefunctions.transitionMatrix(qKCount,k,alphabet)
         # nullMkv = corefunctions.transitionMatrix(nKCount,k,alphabet)
         # lgTbl = corefunctions.logLTbl(queryMkv,nullMkv)
