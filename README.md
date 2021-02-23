@@ -73,7 +73,6 @@ conda install -c anaconda cython
   0. Count k-mers for queries and null before proceeding  
   1. Run the following command
 ```
-  mv *skr counts/
   python train.py --query ./counts/mouseA.dict --null ./counts/mm10Trscpts.dict -k 2,3,4 --qPrefix mouseA --nPrefix mm10Trscpts --qT .9999 --nT .9999 --dir ./markovModels/
 ```
 
