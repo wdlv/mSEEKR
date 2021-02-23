@@ -120,7 +120,7 @@ Parameters:
 
 1. -k : value of k for k-mers
 2. --db : path to FASTA file to optimize parameters on
-3. --prior : hmm.mkv file output by train.py
+3. --prior : hmm.dict file output by train.py
 4. --its : number of iterations of the baum-welch algorithm to run
 5. -cf : FLAG, pass this argument to create a new file in the same directory as --prior 
 
