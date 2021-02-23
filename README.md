@@ -132,31 +132,33 @@ Output:
 
 
 
-## Find HMM state path through sequences of interest
+## Find HMM state path through sequences of interest and seekr pearson correlation score
 
   1. Run the mSEEKR command
 ```
   python mSEEKR.py --db ./fastaFiles/mm10kcn.fa --prefix kcn_queryMouseA --model ./markovModels/mouseA_mm10Trscpts/4/hmm_MLE.dict -k 4 --fasta
 ```
 
-  Parameters
+Parameters
 
-  1. --db : sequences of interest to run the HMM on
-  2. --model : Path to .dict file output from train.py or bw.py
-  3. -k : value of k to use in the analysis (must have been specified in training)
-  4. -n : Number of processing cores to use. Scales with size of fasta file (# of entries, not sequence length)
-  5. --prefix : file name for output, useful to include information about the experiment
+1. --db : sequences of interest to run the HMM on
+2. --model : Path to .dict file output from train.py or bw.py
+3. -k : value of k to use in the analysis (must have been specified in training)
+4. -n : Number of processing cores to use. Scales with size of fasta file (# of entries, not sequence length)
+5. --prefix : file name for output, useful to include information about the experiment
+
+
 
   2. Run the getSeekrScore command
   ```
   python getSeekrScore.py --queryFasta ./fastaFiles/mA.fa --backgroundFasta ./fastaFiles/gencode.vM17.lncRNA_transcripts.fa --mSEEKRdataframeDir ./kcn_queryMouseA_4_viterbi.txt -k 4
 ```
 
-  Parameters
+Parameters
 
-  1. --queryFasta : query fasta files used at the beginning
-  2. --backgroundFasta : lncRNA background sequences fasta file; used to calculate mean and standard deviation for each k-mer
-  3. --mSEEKRdataframeDir : directory to read in the output dataframe generated from command python mSEEKR.py
-  4. -k : The same k value used in the python mSEEKR.py step
-  5. --dir : Directory to save output seekr score dataframe
-  
+1. --queryFasta : query fasta files used at the beginning
+2. --backgroundFasta : lncRNA background sequences fasta file; used to calculate mean and standard deviation for each k-mer
+3. --mSEEKRdataframeDir : directory to read in the output dataframe generated from command python mSEEKR.py
+4. -k : The same k value used in the python mSEEKR.py step
+5. --dir : Directory to save output seekr score dataframe
+
