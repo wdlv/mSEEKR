@@ -148,9 +148,10 @@ Output:
   5. --prefix : file name for output, useful to include information about the experiment
 
   2. Run the getSeekrScore command
-'''
-  python getSeekrScore.py --queryFasta ./fastaFiles/mA.fa --backgroundFasta ./fastaFiles/gencode.vM17.lncRNA_transcripts.fa --mSEEKRdataframeDir ./kcn_queryMouseA_4_viterbi.txt -k 4 
-'''
+  ```
+  python getSeekrScore.py --queryFasta ./fastaFiles/mA.fa --backgroundFasta ./fastaFiles/gencode.vM17.lncRNA_transcripts.fa --mSEEKRdataframeDir ./kcn_queryMouseA_4_viterbi.txt -k 4
+```
+
   Parameters
 
   1. --queryFasta : query fasta files used at the beginning
