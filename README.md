@@ -33,7 +33,6 @@ conda install -c anaconda cython
 
 #### Type following commands in desired directory
 ```
-
 	git clone https://github.com/spragud2/mSEEKR.git
 	cd mSEEKR/
 	python setup.py build_ext --inplace
