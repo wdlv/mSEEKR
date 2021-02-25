@@ -28,7 +28,7 @@ Input:
     
 Output:
     
-    A new .mkv python pickle file (binary) that contains the original k-mer frequencies and updated transition matrix 
+    A new .dict python pickle file (binary) that contains the original k-mer frequencies and updated transition matrix 
 ----------------------------------------------------------------------------------------------------------------------
 arr: list
     a numpy array
@@ -45,7 +45,7 @@ arr: list
 parser = argparse.ArgumentParser()
 parser.add_argument("-k",type=int, required=True)
 parser.add_argument('--db',type=str,help='Path to fasta file containing training sequences', required=True)
-parser.add_argument('--prior',type=str,help='Path to binary .mkv file output from train.py (e.g. markovModels/D_null/2/hmm.dict', required=True)
+parser.add_argument('--prior',type=str,help='Path to binary .dict file output from train.py (e.g. markovModels/D_null/2/hmm.dict', required=True)
 parser.add_argument('-cf','--createfile',action='store_true',help='Create new file rather than overwrite')
 parser.add_argument('--its',type=int,help='Iterations to do, default=100',default=20)
 
