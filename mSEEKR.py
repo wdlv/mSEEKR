@@ -2,7 +2,6 @@ import corefunctions
 import argparse
 from itertools import product
 import numpy as np
-from seekr.fasta_reader import Reader
 from collections import defaultdict
 from itertools import starmap
 #from multiprocessing import pool
@@ -132,7 +131,6 @@ args = parser.parse_args()
 
 if __name__ == '__main__':
 
-    # unused cmd? alphabet = list(args.a)
     #Loop over values of k
     args.a = args.a.upper()
     model = args.model
@@ -144,10 +142,8 @@ if __name__ == '__main__':
     k = int(log(len(hmm['E']['+'].keys()),len(args.a)))
     assert k == args.k, 'Value of k provided does not match supplied hmm file'
 
-    # unused command? kmers = [''.join(p) for p in product(alphabet,repeat=k)] # generate k-mers
-    target = Reader(args.db)
-    targetSeqs,targetHeaders = target.get_seqs(),target.get_headers()
-    targetMap = defaultdict(list)
+    cookedFasta = corefunctions.getCookedFasta(args.db)
+    targetSeqs,targetHeaders = cookedFasta[1::2],cookedFasta[::2]
 
     #Pool processes onto number of CPU cores specified by the user
     # with pool.Pool(args.n) as multiN:
@@ -155,7 +151,6 @@ if __name__ == '__main__':
     #     dataDict = dict(jobs)
 
     dataDict = dict(starmap(hmmCalc,product(*[list(zip(targetHeaders,targetSeqs))])))
-    #print(dataDict)
 
 
     #Check if no hits were found

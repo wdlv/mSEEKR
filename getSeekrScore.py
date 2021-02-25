@@ -1,11 +1,9 @@
 import argparse
-from seekr.fasta_reader import Reader
-#import corefunctions
+import corefunctions
 from scipy import stats
 from itertools import product
 import numpy as np
 import pandas as pd
-
 
 '''
 This program compares the similarity of single sequence(found by command python mSEEKR.py. We call it ***hit sequence***) with input query sequence using
@@ -58,6 +56,7 @@ def getSeqsKmerProcessedCounts(seqs, k, alphabet):
         seq_length = len(seq)
         scaled_increment = 1000 / (seq_length - k + 1)
         scaled_increment = 1 if seq_length <= 1000 else scaled_increment
+
         for i in range(0,seq_length-k+1):
             currentKmer = seq[i:i+k]
             if currentKmer in kmerDict:
@@ -74,6 +73,7 @@ def getSeqsKmerProcessedCounts(seqs, k, alphabet):
 
     return kmerDataMatrix
 
+
 # get a pearson correlation score of zscores calcuated from query and background fastas
 def getPearsonCorrelation(oneSeq, querySeq, backgroundMean, backgroundStd):
     queryZscore = (querySeq - backgroundMean) / backgroundStd
@@ -81,7 +81,6 @@ def getPearsonCorrelation(oneSeq, querySeq, backgroundMean, backgroundStd):
     oneSeqPearCorr = stats.pearsonr(queryZscore, backgroundZscore)[0]
 
     return oneSeqPearCorr
-
 
 
 #Load arguments, see help= for explanation
@@ -103,24 +102,23 @@ if __name__ == '__main__':
     kVals = int(args.k)
     alphabet = args.a.upper()
 
-    # SEEKR fasta reader module
-    # get mean and std; axis = 0 -> column | axis = 1 -> row
+    ### get mean and std; axis = 0 -> column | axis = 1 -> row
 
     # query fasta. Assume query fasta is one sequence. If not, merge multiple sequences to one sequence
-    F = Reader(args.queryFasta)
-    seqs = F.get_seqs()
+    seqs = corefunctions.getCookedFasta(args.queryFasta)[1::2]
 
     if len(seqs) > 1:
         seqs = ''.join(seqs)
         querySeq = getSeqsKmerProcessedCounts([seqs], kVals, alphabet)[0]
     querySeq = getSeqsKmerProcessedCounts(seqs, kVals, alphabet)[0]
 
+    
     # background fasta
-    F = Reader(args.backgroundFasta)
-    seqs = F.get_seqs()
+    seqs = corefunctions.getCookedFasta(args.backgroundFasta)[1::2]
     kmerDataMatrix = getSeqsKmerProcessedCounts(seqs, kVals, alphabet)
     backgroundMean = np.mean(kmerDataMatrix, axis = 0)
     backgroundStd = np.std(kmerDataMatrix, axis = 0)
+
 
     # read in mSEEKR output dataframe
     mseekrdf = pd.read_csv(args.mSEEKRdataframeDir, sep="\t")
@@ -131,7 +129,8 @@ if __name__ == '__main__':
     # iterate each hits and get each's pearson correlation score
     for singleSeq in hitsSeqs:
         oneSeq = getSeqsKmerProcessedCounts([singleSeq], kVals, alphabet)[0]
-        pearsonlist.append(getPearsonCorrelation(oneSeq, querySeq, backgroundMean, backgroundStd))
+        onePearCorr = getPearsonCorrelation(oneSeq, querySeq, backgroundMean, backgroundStd)
+        pearsonlist.append(onePearCorr)
     
     # add pearsonC list to mSEEKR dataframe
     mseekrdf['seekrPearsonCorr'] = pearsonlist

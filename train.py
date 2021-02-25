@@ -1,9 +1,7 @@
 import corefunctions
-#import coreStats
 import argparse
 import itertools
 import numpy as np
-from seekr.fasta_reader import Reader
 from scipy.stats import norm
 from collections import defaultdict
 #from multiprocessing import pool

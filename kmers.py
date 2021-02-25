@@ -5,8 +5,7 @@ import os
 # from multiprocessing import pool
 from itertools import starmap
 from itertools import product
-#from math import ceil
-from seekr.fasta_reader import Reader
+import corefunctions
 
 '''
 This program counts k-mers for multiple specified values of k and saves them
@@ -55,13 +54,13 @@ if __name__ == '__main__':
     kVals = [int(i) for i in args.k.split(',')]
     a = args.a.upper()
 
-    #SEEKR fasta reader module
-    F = Reader(args.fasta)
-    fS = F.get_seqs()
+    #Read in fasta file
+    seqs = corefunctions.getCookedFasta(args.fasta)[1::2]
+
 
     #Join sequences together using $ delimiter character
-    fString = '$'.join(fS).upper()
-    lenFString = sum([len(i) for i in fS])
+    fString = '$'.join(seqs)
+    #lenFString = sum([len(i) for i in fS])
 
     # Need to figure out how to deal with very long fasta files (~ 2-3X the size of the transcriptome in mice)
     # if lenFString >= 2147483647:
@@ -75,7 +74,6 @@ if __name__ == '__main__':
 
     # call kmers.pyx cython file to conduct kmer calculation and get kmer count dictionary as return
     dataDict = dict(starmap(kmers.main,product(*[[fString],kVals,[a]])))
-    #print(dataDict)
 
 
     #Save data

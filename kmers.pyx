@@ -1,4 +1,3 @@
-from seekr.fasta_reader import Reader
 from itertools import product
 
 # Cython code

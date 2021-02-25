@@ -4,6 +4,31 @@ from itertools import groupby
 from scipy.special import logsumexp
 import pandas as pd
 
+'''
+Read in fasta file and reorganize it to a list with following format:
+[header1, sequence1, header2, sequence2, .....]
+'''
+
+def getCookedFasta(fastaFile):
+    with open(fastaFile) as ff:
+        rawFasta = [line.strip() for line in ff]
+    rawFasta = [x for x in rawFasta if len(x)>0]
+    cookedFasta = []
+    seq = ""
+    for i, line in enumerate(rawFasta):
+        if line[0] == ">":
+            if seq:
+                cookedFasta.append(seq.upper())
+                seq = ""
+            else:
+                assert i == 0, "There may be a header without a sequence at line {}.".format(i)
+            cookedFasta.append(line)
+        else:
+            seq += line
+    cookedFasta.append(seq.upper())
+    return cookedFasta
+
+
 
 ''' Key for itertools groupby
     Alters flag when sequence changes from one condition to another
@@ -89,7 +114,14 @@ def LLR(hits,k,E):
     return arr
 
 
-
+# def getRawKmerCount(seq, k):
+#     kmerCountDict = defaultdict(int)
+#     seq_length = len(seq)
+#     for i in range(0,seq_length-k+1):
+#         currentKmer = seq[i:i+k]
+#         if 'N' not in currentKmer:
+#             kmerCountDict[currentKmer] += 1
+#     print(kmerCountDict)
 
 # def transcriptOutput(seqHits,starts,ends,k,E,tHead,tSeq):
 

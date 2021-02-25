@@ -1,5 +1,3 @@
-
-from seekr.fasta_reader import Reader
 import numpy as np
 import corefunctions
 import argparse
@@ -57,9 +55,7 @@ assert args.its > 0, 'Please provide an integer greater than or equal to 1'
 assert args.k > 0, 'Please provide an integer greater than or equal to 1'
 
 
-
-fa = Reader(args.db)
-seqs = '$'.join(fa.get_seqs())
+seqs = '$'.join(corefunctions.getCookedFasta(args.db)[1::2])
 model = args.prior
 
 k = args.k
