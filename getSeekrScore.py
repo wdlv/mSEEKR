@@ -78,7 +78,7 @@ def getSeqsKmerProcessedCounts(seqs, k, alphabet):
 def getPearsonCorrelation(oneSeq, querySeq, backgroundMean, backgroundStd):
     queryZscore = (querySeq - backgroundMean) / backgroundStd
     backgroundZscore = (oneSeq - backgroundMean) / backgroundStd
-    oneSeqPearCorr = stats.pearsonr(queryZscore, backgroundZscore)[1]
+    oneSeqPearCorr = stats.pearsonr(queryZscore, backgroundZscore)[0]
 
     return oneSeqPearCorr
 
