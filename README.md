@@ -33,10 +33,7 @@ conda install -c anaconda cython
 
 #### Type following commands in desired directory
 ```
-  The mSEEKR package has used functions from seekr so please install the seekr package first.
-  It is lcoated at https://github.com/CalabreseLab/seekr
-  
-  Then lets install mSEEKR package:
+
 	git clone https://github.com/spragud2/mSEEKR.git
 	cd mSEEKR/
 	python setup.py build_ext --inplace
