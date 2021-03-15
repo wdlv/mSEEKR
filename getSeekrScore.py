@@ -55,7 +55,7 @@ def getSeqsKmerProcessedCounts(seqs, k, alphabet):
         # scale kmer count number to counts/kb of current sequence
         seq_length = len(seq)
         scaled_increment = 1000 / (seq_length - k + 1)
-        #scaled_increment = 1 if seq_length <= 1000 else scaled_increment
+        scaled_increment = 1 if seq_length <= 1000 else scaled_increment
 
         for i in range(0,seq_length-k+1):
             currentKmer = seq[i:i+k]
@@ -102,7 +102,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--queryFasta', type=str,help='Path to query fasta file', required=True)
 parser.add_argument('--backgroundFasta', type=str,help='Path to lncRNA background sequences fasta file; used to calculate mean and standard deviation for each k-mer', required=True)
 parser.add_argument('--mSEEKRdataframeDir',type=str,help='Directory to read in the output dataframe generated from command python mSEEKR.py',default='./', required=True)
-#parser.add_argument('--name',type=str,help='name for seekPearsonCorr file',default='out', required=True)
+parser.add_argument('--name',type=str,help='name for output file',default='output')
 parser.add_argument('--dir',type=str,help='Directory to save output seekr score dataframe',default='./')
 parser.add_argument('-k',type=str,help='The same k value used in the python mSEEKR.py step', required=True)
 parser.add_argument('-a',type=str,help='String, Alphabet to generate k-mers (e.g. ATCG); default=ATCG',default='ATCG')

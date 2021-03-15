@@ -39,7 +39,7 @@ kDir: str
 parser = argparse.ArgumentParser()
 parser.add_argument('--fasta', type=str,help='Path to fasta file', required=True)
 parser.add_argument('--name',type=str,help='name for count file',default='out', required=True)
-parser.add_argument('--dir',type=str,help='directory to save output',default='./', required=True)
+parser.add_argument('--dir',type=str,help='directory to save output',default='./')
 parser.add_argument('-k',type=str,help='Comma delimited string of possible k-mer values', required=True)
 parser.add_argument('-a',type=str,help='String, Alphabet to generate k-mers (e.g. ATCG); default=ATCG',default='ATCG')
 # parser.add_argument('-n',type=int,help='Number of CPU cores. Each job corresponds to a value of k, and the program scales well with multiprocessing',default=1)

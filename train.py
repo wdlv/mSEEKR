@@ -73,7 +73,7 @@ parser.add_argument('--qT',type=float,help='Probability of query to query transi
 parser.add_argument('--nT',type=float,help='Probability of null to null transition', required=True) #default=.9999)
 parser.add_argument('--qPrefix',type=str,help='String, Output file prefix;default=None',default='query', required=True)
 parser.add_argument('--nPrefix',type=str,help='String, Output file prefix;default=None',default='null', required=True)
-parser.add_argument('--dir',type=str,help='Output directory',default='./', required=True)
+parser.add_argument('--dir',type=str,help='Output directory',default='./')
 parser.add_argument('-k',type=str,help='Comma delimited string of possible k-mer values,must be found in the k-mer count file', required=True) #default='2,3,4')
 parser.add_argument('-a',type=str,help='String, Alphabet to generate k-mers (e.g. ATCG); default=ATCG',default='ATCG')
 
