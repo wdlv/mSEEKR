@@ -49,22 +49,24 @@ def getSeqsKmerProcessedCounts(seqs, k, alphabet):
     kmerDataMatrix = np.zeros((len(seqs), 4**k), dtype=np.float32)
 
     for index, seq in enumerate(seqs):
-        # create a dict with all kmers and initial value is 0
-        kmerDict = dict.fromkeys(demoKmers, 0)
+        # create a dict with all kmers and initial value is 1
+        kmerDict = dict.fromkeys(demoKmers, 1)
 
         # scale kmer count number to counts/kb of current sequence
         seq_length = len(seq)
         scaled_increment = 1000 / (seq_length - k + 1)
-        scaled_increment = 1 if seq_length <= 1000 else scaled_increment
+        #scaled_increment = 1 if seq_length <= 1000 else scaled_increment
 
         for i in range(0,seq_length-k+1):
             currentKmer = seq[i:i+k]
             if currentKmer in kmerDict:
                 kmerDict[currentKmer] += scaled_increment
         
-        # add scaled 1 to kmer whose count is 0
         onerow = list(kmerDict.values())
-        onerow = [scaled_increment if x==0 else x for x in onerow]
+
+        # add scaled 1 to kmer whose count is 0
+        # onerow = [scaled_increment if x==0 else x for x in onerow]
+
         # assign list value to numpy matrix's each row
         kmerDataMatrix[index] = np.asarray(onerow, dtype=np.float32)
     
@@ -73,14 +75,26 @@ def getSeqsKmerProcessedCounts(seqs, k, alphabet):
 
     return kmerDataMatrix
 
-
 # get a pearson correlation score of zscores calcuated from query and background fastas
-def getPearsonCorrelation(oneSeq, querySeq, backgroundMean, backgroundStd):
-    queryZscore = (querySeq - backgroundMean) / backgroundStd
-    backgroundZscore = (oneSeq - backgroundMean) / backgroundStd
-    oneSeqPearCorr = stats.pearsonr(queryZscore, backgroundZscore)[0]
+# def getPearsonCorrelation(oneSeq, querySeq, backgroundMean, backgroundStd):
 
-    return oneSeqPearCorr
+#     queryZscore = (querySeq - backgroundMean) / backgroundStd
+#     backgroundZscore = (oneSeq - backgroundMean) / backgroundStd
+#     oneSeqPearCorr = stats.pearsonr(queryZscore, backgroundZscore)[0]
+
+#     return oneSeqPearCorr
+
+
+def rowNormalization(inputSeqs):
+
+    inputSeqs = (inputSeqs.T - np.mean(inputSeqs, axis=1)).T
+    inputSeqs = (inputSeqs.T / np.std(inputSeqs, axis=1)).T
+
+    return inputSeqs
+
+def getSeekrScorePearson(inputMatrix):
+    return np.inner(inputMatrix, inputMatrix) / inputMatrix.shape[1]
+
 
 
 #Load arguments, see help= for explanation
@@ -104,20 +118,21 @@ if __name__ == '__main__':
 
     ### get mean and std; axis = 0 -> column | axis = 1 -> row
 
-    # query fasta. Assume query fasta is one sequence. If not, merge multiple sequences to one sequence
-    seqs = corefunctions.getCookedFasta(args.queryFasta)[1::2]
-
-    if len(seqs) > 1:
-        seqs = ''.join(seqs)
-        querySeq = getSeqsKmerProcessedCounts([seqs], kVals, alphabet)[0]
-    querySeq = getSeqsKmerProcessedCounts(seqs, kVals, alphabet)[0]
-
-    
     # background fasta
     seqs = corefunctions.getCookedFasta(args.backgroundFasta)[1::2]
     kmerDataMatrix = getSeqsKmerProcessedCounts(seqs, kVals, alphabet)
     backgroundMean = np.mean(kmerDataMatrix, axis = 0)
     backgroundStd = np.std(kmerDataMatrix, axis = 0)
+
+    # query fasta. Assume query fasta is one sequence. If not, merge multiple sequences to one sequence
+    seqs = corefunctions.getCookedFasta(args.queryFasta)[1::2]
+
+    if len(seqs) > 1:
+        seqs = ''.join(seqs)
+    else:
+        seqs = seqs
+        querySeq = getSeqsKmerProcessedCounts([seqs], kVals, alphabet)[0]
+    querySeq = getSeqsKmerProcessedCounts(seqs, kVals, alphabet)[0]
 
 
     # read in mSEEKR output dataframe
@@ -125,12 +140,34 @@ if __name__ == '__main__':
 
     hitsSeqs = list(mseekrdf['Sequence'])
 
-    pearsonlist = []
-    # iterate each hits and get each's pearson correlation score
+    combinedSeqs = [querySeq.tolist()]
+
     for singleSeq in hitsSeqs:
         oneSeq = getSeqsKmerProcessedCounts([singleSeq], kVals, alphabet)[0]
-        onePearCorr = getPearsonCorrelation(oneSeq, querySeq, backgroundMean, backgroundStd)
-        pearsonlist.append(onePearCorr)
+        combinedSeqs.append(oneSeq.tolist())
+    
+
+    # normalize data matrix with background fasta's mean and std
+    combinedSeqs = (np.array(combinedSeqs) - backgroundMean) / backgroundStd
+
+    # row normalization
+    normCombinedSeqs = rowNormalization(combinedSeqs)
+
+
+    # seekr pearson score
+    seekrScoreMatrix = getSeekrScorePearson(normCombinedSeqs)
+
+    # extract seekr pearson score from matrix
+    pearsonlist = seekrScoreMatrix.tolist()[0][1:]
+
+    print(pearsonlist)
+
+    # # iterate each hits and get each's pearson correlation score
+    # queryNormSeq = normSeqs[0]
+    # for OneNormSeq in normSeqs[1:]:
+
+    #     onePearCorr = getPearsonCorrelation(OneNormSeq, queryNormSeq, backgroundMean, backgroundStd)
+    #     pearsonlist.append(onePearCorr)
     
     # add pearsonC list to mSEEKR dataframe
     mseekrdf['seekrPearsonCorr'] = pearsonlist

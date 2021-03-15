@@ -60,7 +60,7 @@ conda install -c anaconda cython
 
   Output:
 
-  Outputs binary .skr (seekr) files containing count matrices to --dir
+  Outputs binary .dict files containing count matrices to --dir
 
 <hr/>
 
