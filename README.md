@@ -142,18 +142,36 @@ Parameters
 5. --prefix : file name for output, useful to include information about the experiment
 
 
+
+
+## Calculate background fasta's seekr pearson correlation score's mean and standard deviation
+
+  2. Run the getBackgroundMatrixMeanStd.py command
+  ```
+  python getBackgroundMatrixMeanStd.py --backgroundFasta ./fastaFiles/gencode.vM17.lncRNA_transcripts.fa -k 4
+```
+
+Parameters
+
+1. --backgroundFasta : lncRNA background sequences fasta file; used to calculate mean and standard deviation for each k-mer
+2. -k : The same k value used in the python mSEEKR.py step
+
+
+
+
 ## Calculate seekr pearson correlation score
 
-  2. Run the getSeekrScore command
+  3. Run the getSeekrScore command
   ```
-  python getSeekrScore.py --queryFasta ./fastaFiles/mA.fa --backgroundFasta ./fastaFiles/gencode.vM17.lncRNA_transcripts.fa --mSEEKRdataframeDir ./kcn_queryMouseA_4_viterbi.txt -k 4
+  python getSeekrScore.py --queryFasta ./fastaFiles/mA.fa --backgroundFasta ./fastaFiles/gencode.vM17.lncRNA_transcripts.fa --backgroundMatrixMeanStd ./bgMatirxMeanStd.txt --mSEEKRdataframeDir ./kcn_queryMouseA_4_viterbi.txt -k 4
 ```
 
 Parameters
 
 1. --queryFasta : query fasta files used at the beginning
 2. --backgroundFasta : lncRNA background sequences fasta file; used to calculate mean and standard deviation for each k-mer
-3. --mSEEKRdataframeDir : directory to read in the output dataframe generated from command python mSEEKR.py
-4. -k : The same k value used in the python mSEEKR.py step
-5. --dir : Directory to save output seekr score dataframe
+3. --backgroundMatrixMeanStd : mean and standard deviation of background fasta's seekr pearson correlation score
+4. --mSEEKRdataframeDir : directory to read in the output dataframe generated from command python mSEEKR.py
+5. -k : The same k value used in the python mSEEKR.py step
+6. --dir : Directory to save output seekr score dataframe
 

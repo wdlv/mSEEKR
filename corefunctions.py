@@ -5,6 +5,68 @@ from scipy.special import logsumexp
 import pandas as pd
 
 '''
+transform sequences to kmer counts
+'''
+# preprocess the kmer counts
+def getSeqsKmerProcessedCounts(seqs, k, alphabet):
+    # get all the possible kmer combination
+    demoKmers = [''.join(p) for p in product(alphabet, repeat=k)]
+
+    # create a numpy array with initial value 0; 4 is equal to len(ATCG)
+    kmerDataMatrix = np.zeros((len(seqs), 4**k), dtype=np.float32)
+
+    for index, seq in enumerate(seqs):
+        # create a dict with all kmers and initial value is 1
+        kmerDict = dict.fromkeys(demoKmers, 1)
+
+        # scale kmer count number to counts/kb of current sequence
+        seq_length = len(seq)
+        scaled_increment = 1000 / (seq_length - k + 1)
+        scaled_increment = 1 if seq_length <= 1000 else scaled_increment
+
+        for i in range(0,seq_length-k+1):
+            currentKmer = seq[i:i+k]
+            if currentKmer in kmerDict:
+                kmerDict[currentKmer] += scaled_increment
+        
+        onerow = list(kmerDict.values())
+
+        # add scaled 1 to kmer whose count is 0
+        # onerow = [scaled_increment if x==0 else x for x in onerow]
+
+        # assign list value to numpy matrix's each row
+        kmerDataMatrix[index] = np.asarray(onerow, dtype=np.float32)
+    
+    # log2 transform the count matrix
+    kmerDataMatrix = np.log2(kmerDataMatrix)
+
+    return kmerDataMatrix
+
+# get a pearson correlation score of zscores calcuated from query and background fastas
+# def getPearsonCorrelation(oneSeq, querySeq, backgroundMean, backgroundStd):
+
+#     queryZscore = (querySeq - backgroundMean) / backgroundStd
+#     backgroundZscore = (oneSeq - backgroundMean) / backgroundStd
+#     oneSeqPearCorr = stats.pearsonr(queryZscore, backgroundZscore)[0]
+
+#     return oneSeqPearCorr
+
+'''
+The following function rowNormalization and getSeekrScorePearson is using the same strategy as the method used in seekr package
+'''
+
+def rowNormalization(inputSeqs):
+
+    inputSeqs = (inputSeqs.T - np.mean(inputSeqs, axis=1)).T
+    inputSeqs = (inputSeqs.T / np.std(inputSeqs, axis=1)).T
+
+    return inputSeqs
+
+def getSeekrScorePearson(inputMatrix):
+    return np.inner(inputMatrix, inputMatrix) / inputMatrix.shape[1]
+
+
+'''
 Read in fasta file and reorganize it to a list with following format:
 [header1, sequence1, header2, sequence2, .....]
 '''
