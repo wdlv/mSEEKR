@@ -47,6 +47,7 @@ parser.add_argument('--backgroundFasta', type=str,help='Path to lncRNA backgroun
 parser.add_argument('--backgroundMatrixMeanStd', type=str,help='Path to lncRNA background matrix mean and std', required=True)
 parser.add_argument('--mSEEKRdataframeDir',type=str,help='Directory to read in the output dataframe generated from command python mSEEKR.py',default='./', required=True)
 parser.add_argument('--name',type=str,help='name for output file',default='output')
+parser.add_argument('--minSeqLength',type=str,help='the minimum lenght of seq found',default='0')
 parser.add_argument('--dir',type=str,help='Directory to save output seekr score dataframe',default='./')
 parser.add_argument('-k',type=str,help='The same k value used in the python mSEEKR.py step', required=True)
 parser.add_argument('-a',type=str,help='String, Alphabet to generate k-mers (e.g. ATCG); default=ATCG',default='ATCG')
@@ -85,9 +86,11 @@ if __name__ == '__main__':
 
 
     # read in mSEEKR output dataframe
+    minlength = args.minSeqLength
+
     mseekrdf = pd.read_csv(args.mSEEKRdataframeDir, sep="\t")
 
-    hitsSeqs = (x for x in mseekrdf['Sequence'])
+    hitsSeqs = (x for x in mseekrdf['Sequence'] if len(x)>=minlength)
 
     combinedSeqs = [querySeq.tolist()]
 

@@ -163,7 +163,7 @@ Parameters
 
   3. Run the getSeekrScore command
   ```
-  python getSeekrScore.py --queryFasta ./fastaFiles/mA.fa --backgroundFasta ./fastaFiles/gencode.vM17.lncRNA_transcripts.fa --backgroundMatrixMeanStd ./bgMatirxMeanStd.txt --mSEEKRdataframeDir ./kcn_queryMouseA_4_viterbi.txt -k 4
+  python getSeekrScore.py --queryFasta ./fastaFiles/mA.fa --backgroundFasta ./fastaFiles/gencode.vM17.lncRNA_transcripts.fa --backgroundMatrixMeanStd ./bgMatrixMeanStd.txt --mSEEKRdataframeDir ./kcn_queryMouseA_4_viterbi.txt -k 4
 ```
 
 Parameters
@@ -174,4 +174,5 @@ Parameters
 4. --mSEEKRdataframeDir : directory to read in the output dataframe generated from command python mSEEKR.py
 5. -k : The same k value used in the python mSEEKR.py step
 6. --dir : Directory to save output seekr score dataframe
+7. --minSeqLength : The minimum length of sequence found
 

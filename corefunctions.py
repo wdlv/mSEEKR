@@ -22,7 +22,7 @@ def getSeqsKmerProcessedCounts(seqs, k, alphabet):
         # scale kmer count number to counts/kb of current sequence
         seq_length = len(seq)
         scaled_increment = 1000 / (seq_length - k + 1)
-        scaled_increment = 1 if seq_length <= 1000 else scaled_increment
+        #scaled_increment = 1 if seq_length <= 1000 else scaled_increment
 
         for i in range(0,seq_length-k+1):
             currentKmer = seq[i:i+k]
@@ -30,6 +30,7 @@ def getSeqsKmerProcessedCounts(seqs, k, alphabet):
                 kmerDict[currentKmer] += scaled_increment
         
         onerow = list(kmerDict.values())
+
 
         # add scaled 1 to kmer whose count is 0
         # onerow = [scaled_increment if x==0 else x for x in onerow]
