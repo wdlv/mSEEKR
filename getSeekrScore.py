@@ -86,11 +86,12 @@ if __name__ == '__main__':
 
 
     # read in mSEEKR output dataframe
-    minlength = args.minSeqLength
+    minlength = int(args.minSeqLength)
 
     mseekrdf = pd.read_csv(args.mSEEKRdataframeDir, sep="\t")
 
-    hitsSeqs = (x for x in mseekrdf['Sequence'] if len(x)>=minlength)
+    hitsSeqs = [x for x in mseekrdf['Sequence'] if len(x)>=minlength]
+    mseekrdf = mseekrdf[mseekrdf['Sequence'].isin(hitsSeqs)]
 
     combinedSeqs = [querySeq.tolist()]
 
