@@ -43,11 +43,11 @@ arr: list
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-k",type=int, required=True)
+parser.add_argument("-k",type=int, help="Value of k for k-mers", required=True)
 parser.add_argument('--db',type=str,help='Path to fasta file containing training sequences', required=True)
-parser.add_argument('--prior',type=str,help='Path to binary .dict file output from train.py (e.g. markovModels/D_null/2/hmm.dict', required=True)
+parser.add_argument('--prior',type=str,help='Path to binary .dict file output from train.py (e.g. markovModels/D_null/2/hmm.dict)', required=True)
 parser.add_argument('-cf','--createfile',action='store_true',help='Create new file rather than overwrite')
-parser.add_argument('--its',type=int,help='Iterations to do, default=100',default=20)
+parser.add_argument('--its',type=int,help='Iterations to do',default=20)
 
 args = parser.parse_args()
 

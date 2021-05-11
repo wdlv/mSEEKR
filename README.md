@@ -52,15 +52,16 @@ conda install -c anaconda cython
 
 #### Parameters:
 
-1. --fasta : path to fasta file
-2. -k : comma separated list of values of k
-3. --name : name to give output file
-4. --dir : output directory 
+1. --fasta : Path to fasta file. (Required)
+2. -k : Comma delimited string of possible k-mer values. For example, 3,4,5 or just 4. (Required)
+3. --name : Desired output name for count file. Default is 'out'
+4. --dir : Directory to save output count file. Default is './' 
+5. -a : String, Alphabet to generate k-mers (e.g. ATCG). Default is ATCG
 
 
   Output:
 
-  Outputs binary .dict files containing count matrices to --dir
+  Outputs binary .dict files containing count matrices to directory set by --dir
 
 <hr/>
 
@@ -74,14 +75,15 @@ conda install -c anaconda cython
 
 Parameters:
 
-1. --query : Path to query count file
-2. --null : Path to null count file
-3. -k : comma separated list of values of k to train for, must have been calculated prior
-4. --qPrefix : prefix file name for query
-5. --nPrefix : prefix file name for null
-6. --qT : Query to query transition parameter, query to null is 1 - qT
-7. --nT : Null to null transition parameter, null to query is 1 - nT
-8. --dir : output directory
+1. --query : Path to kmer count file for sequences of interest (e.g. functional regions of a ncRNA). (Required)
+2. --null : Path to kmer count file that compose null model (e.g. transcriptome, genome, etc). (Required)
+3. -k : Comma separated list of values of k to train for, must have been calculated prior. (Required)
+4. --qPrefix : prefix file name for query. (Required)
+5. --nPrefix : prefix file name for null. (Required)
+6. --qT : Query to query transition parameter, query to null is 1 - qT. (Required)
+7. --nT : Null to null transition parameter, null to query is 1 - nT. (Required)
+8. --dir : Output directory. Default is './'
+9. -a : String, Alphabet to generate k-mers (e.g. ATCG). Default is ATCG
 
   Output:
 
@@ -113,11 +115,11 @@ The above command takes the HMM trained on repeat A at k =4, and uses Xist to fi
 
 Parameters:
 
-1. -k : value of k for k-mers
-2. --db : path to FASTA file to optimize parameters on
-3. --prior : hmm.dict file output by train.py
-4. --its : number of iterations of the baum-welch algorithm to run
-5. -cf : FLAG, pass this argument to create a new file in the same directory as --prior 
+1. -k : Value of k for k-mers. One integer is requried. (Required)
+2. --db : Path to fasta file containing training sequences. (Required)
+3. --prior : Path to binary .dict file output from train.py(e.g. markovModels/D_null/2/hmm.dict). (Required)
+4. --its : Number of iterations of the baum-welch algorithm to run. Default is 20
+5. -cf : FLAG, pass this argument to create a new file in the same directory as --prior rather than overwrite
 
 Output:
 1. Replaces the file passed as --prior with an updated version that contains the MLE transition matrix
@@ -135,11 +137,10 @@ Output:
 
 Parameters
 
-1. --db : sequences of interest to run the HMM on
-2. --model : Path to .dict file output from train.py or bw.py
-3. -k : value of k to use in the analysis (must have been specified in training)
-4. -n : Number of processing cores to use. Scales with size of fasta file (# of entries, not sequence length)
-5. --prefix : file name for output, useful to include information about the experiment
+1. --db : Path to fasta file with sequences to calculate similarity score. (Required)
+2. --model : Path to .dict file output from train.py or bw.py. (Required)
+3. -k : Value of k to use. Must be the same as the k value used in training. (Required)
+4. --prefix : File name for output, useful to include information about the experiment. (Required)
 
 
 
@@ -153,8 +154,12 @@ Parameters
 
 Parameters
 
-1. --backgroundFasta : lncRNA background sequences fasta file; used to calculate mean and standard deviation for each k-mer
-2. -k : The same k value used in the python mSEEKR.py step
+1. --backgroundFasta : Path to lncRNA background sequences fasta file; used to calculate mean and standard deviation of k-mer seekr score matrix. (Required)
+2. -k : The same k value used in the python mSEEKR.py step. (Required)
+3. --name : Name for the file output background fasta kmer seekr score matrix mean and std. Default is 'bgMatrixMeanStd'
+4. --outdir : Directory to save output background fasta kmer seekr score matrix mean and std. Default is './'
+5. -a : String, Alphabet to generate k-mers (e.g. ATCG). Default is 'ATCG'
+
 
 
 
@@ -168,11 +173,13 @@ Parameters
 
 Parameters
 
-1. --queryFasta : query fasta files used at the beginning
-2. --backgroundFasta : lncRNA background sequences fasta file; used to calculate mean and standard deviation for each k-mer
-3. --backgroundMatrixMeanStd : mean and standard deviation of background fasta's seekr pearson correlation score
-4. --mSEEKRdataframeDir : directory to read in the output dataframe generated from command python mSEEKR.py
-5. -k : The same k value used in the python mSEEKR.py step
-6. --dir : Directory to save output seekr score dataframe
-7. --minSeqLength : The minimum length of sequence found
+1. --queryFasta : Path to query fasta file. (Required)
+2. --backgroundFasta : Path to lncRNA background sequences fasta file. (Required)
+3. --backgroundMatrixMeanStd : Path to lncRNA background matrix mean and std generated from getBackgroundMatrixMeanStd.py. Note: backgroundMatrixMeanStd and backgroundFasta are using the same fasta file. The reason there are two commands is that computing mean and std of background fasta kmer seekr score requires too much resources. (Required)
+4. --mSEEKRdataframeDir : Directory to read in the output dataframe generated from mSEEKR.py. (Required)
+5. -k : The same k value used in the mSEEKR.py step. (Required)
+6. --dir : Directory to save output dataframe. Default is './'
+7. --name : Name for output file. Default is 'output'
+8. --minSeqLength : The minimum length of sequence found. Default is 0
+9. -a : String, Alphabet to generate k-mers (e.g. ATCG). Default is 'ATCG'
 

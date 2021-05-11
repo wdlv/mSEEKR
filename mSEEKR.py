@@ -117,12 +117,12 @@ def hmmCalc(data):
 
 # input commands
 parser = argparse.ArgumentParser()
-parser.add_argument("--model",type=str,help='Path to .mkv file output from train.py or bw.py', required=True)
-parser.add_argument("-k",type=int,help='Value of k to use', required=True)
+parser.add_argument("--model",type=str,help='Path to .dict file output from train.py or bw.py', required=True)
+parser.add_argument("-k",type=int,help='Value of k to use. Must be the same as the k value used in training', required=True)
 parser.add_argument('--db',type=str,help='Path to fasta file with sequences to calculate similarity score', required=True)
-parser.add_argument('--prefix',type=str,help='String, Output file name;default=None', required=True)
+parser.add_argument('--prefix',type=str,help='String, Output file name', required=True)
 #parser.add_argument('--bkg',type=str,help='Path to fasta file from which to calculate background nucleotide frequencies, if not passed default is uniform',default=None)
-parser.add_argument('-a',type=str,help='String, Alphabet to generate k-mers (e.g. ATCG); default=ATCG',default='ATCG')
+parser.add_argument('-a',type=str,help='String, Alphabet to generate k-mers (e.g. ATCG)',default='ATCG')
 #parser.add_argument('-n',type=int,help='Integer 1 <= n <= max(cores), Number of processor cores to use; default = 1. This scales with the number of sequence comparisons in --db',default=1)
 parser.add_argument('--fasta',action='store_true',help='FLAG: print sequence of hit, ignored if --wt is passed')
 

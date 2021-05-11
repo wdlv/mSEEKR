@@ -14,12 +14,12 @@ Process background fasta file and get each sequence's kmer matrix then calcualte
 #Load arguments, see help= for explanation
 parser = argparse.ArgumentParser()
 # parser.add_argument('--queryFasta', type=str,help='Path to query fasta file', required=True)
-parser.add_argument('--backgroundFasta', type=str,help='Path to lncRNA background sequences fasta file; used to calculate mean and standard deviation for each k-mer', required=True)
+parser.add_argument('--backgroundFasta', type=str,help='Path to lncRNA background sequences fasta file; used to calculate mean and standard deviation of k-mer seekr score matrix', required=True)
 # parser.add_argument('--mSEEKRdataframeDir',type=str,help='Directory to read in the output dataframe generated from command python mSEEKR.py',default='./', required=True)
-parser.add_argument('--name',type=str,help='name for output background matrix file',default='bgMatrixMeanStd')
-parser.add_argument('--outdir',type=str,help='Directory to save output backgroundKmerDataMatrix mean and std',default='./')
+parser.add_argument('--name',type=str,help='Name for output background fasta kmer seekr score matrix mean and std',default='bgMatrixMeanStd')
+parser.add_argument('--outdir',type=str,help='Directory to save output background fasta kmer seekr score matrix mean and std',default='./')
 parser.add_argument('-k',type=str,help='The same k value used in the python mSEEKR.py step', required=True)
-parser.add_argument('-a',type=str,help='String, Alphabet to generate k-mers (e.g. ATCG); default=ATCG',default='ATCG')
+parser.add_argument('-a',type=str,help='String, Alphabet to generate k-mers (e.g. ATCG)',default='ATCG')
 
 args = parser.parse_args()
 

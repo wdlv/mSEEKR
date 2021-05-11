@@ -43,14 +43,14 @@ backgroundStd: one dimensional numpy array
 #Load arguments, see help= for explanation
 parser = argparse.ArgumentParser()
 parser.add_argument('--queryFasta', type=str,help='Path to query fasta file', required=True)
-parser.add_argument('--backgroundFasta', type=str,help='Path to lncRNA background sequences fasta file; used to calculate mean and standard deviation for each k-mer', required=True)
-parser.add_argument('--backgroundMatrixMeanStd', type=str,help='Path to lncRNA background matrix mean and std', required=True)
-parser.add_argument('--mSEEKRdataframeDir',type=str,help='Directory to read in the output dataframe generated from command python mSEEKR.py',default='./', required=True)
-parser.add_argument('--name',type=str,help='name for output file',default='output')
-parser.add_argument('--minSeqLength',type=str,help='the minimum lenght of seq found',default='0')
-parser.add_argument('--dir',type=str,help='Directory to save output seekr score dataframe',default='./')
-parser.add_argument('-k',type=str,help='The same k value used in the python mSEEKR.py step', required=True)
-parser.add_argument('-a',type=str,help='String, Alphabet to generate k-mers (e.g. ATCG); default=ATCG',default='ATCG')
+parser.add_argument('--backgroundFasta', type=str,help='Path to lncRNA background sequences fasta file', required=True)
+parser.add_argument('--backgroundMatrixMeanStd', type=str,help='Path to lncRNA background matrix mean and std generated from getBackgroundMatrixMeanStd.py. Note: backgroundMatrixMeanStd and backgroundFasta are using the same fasta file. The reason there are two commands is that computing mean and std of background fasta kmer seekr score requires too much resources', required=True)
+parser.add_argument('--mSEEKRdataframeDir',type=str,help='Directory to read in the output dataframe generated from mSEEKR.py',default='./', required=True)
+parser.add_argument('--minSeqLength',type=str,help='The minimum lenght of seq found',default='0')
+parser.add_argument('--dir',type=str,help='Directory to save output dataframe',default='./')
+parser.add_argument('--name',type=str,help='Name for output file',default='output')
+parser.add_argument('-k',type=str,help='The same k value used in the mSEEKR.py step', required=True)
+parser.add_argument('-a',type=str,help='String, Alphabet to generate k-mers (e.g. ATCG)',default='ATCG')
 
 args = parser.parse_args()
 
