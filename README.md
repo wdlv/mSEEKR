@@ -56,7 +56,7 @@ conda install -c anaconda cython
 2. -k : Comma delimited string of possible k-mer values. For example, 3,4,5 or just 4. (Required)
 3. --name : Desired output name for count file. Default is 'out'
 4. --dir : Directory to save output count file. Default is './' 
-5. -a : String, Alphabet to generate k-mers (e.g. ATCG). Default is ATCG
+5. -a : String, Alphabet to generate k-mers (e.g. ATCG). Default is 'ATCG'
 
 
   Output:
@@ -83,7 +83,7 @@ Parameters:
 6. --qT : Query to query transition parameter, query to null is 1 - qT. (Required)
 7. --nT : Null to null transition parameter, null to query is 1 - nT. (Required)
 8. --dir : Output directory. Default is './'
-9. -a : String, Alphabet to generate k-mers (e.g. ATCG). Default is ATCG
+9. -a : String, Alphabet to generate k-mers (e.g. ATCG). Default is 'ATCG'
 
   Output:
 
