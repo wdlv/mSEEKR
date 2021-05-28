@@ -173,7 +173,7 @@ Parameters
 
 Parameters
 
-1. --queryFasta : Path to query fasta file. (Required)
+1. --queryFasta : Path to query fasta file. NOTE: All the sequences in query fasta file will be merged to one sequence at the beginning (Required)
 2. --backgroundFasta : Path to lncRNA background sequences fasta file. (Required)
 3. --backgroundMatrixMeanStd : Path to lncRNA background matrix mean and std generated from getBackgroundMatrixMeanStd.py. Note: backgroundMatrixMeanStd and backgroundFasta are using the same fasta file. The reason there are two commands is that computing mean and std of background fasta kmer seekr score requires too much resources. (Required)
 4. --mSEEKRdataframeDir : Directory to read in the output dataframe generated from mSEEKR.py. (Required)
