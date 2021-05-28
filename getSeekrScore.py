@@ -93,25 +93,28 @@ if __name__ == '__main__':
     hitsSeqs = [x for x in mseekrdf['Sequence'] if len(x)>=minlength]
     mseekrdf = mseekrdf[mseekrdf['Sequence'].isin(hitsSeqs)]
 
-    combinedSeqs = [querySeq.tolist()]
+    querySeqList = [querySeq.tolist()]
+    hitsSeqList = []
 
     for singleSeq in hitsSeqs:
         oneSeq = corefunctions.getSeqsKmerProcessedCounts([singleSeq], kVals, alphabet)[0]
-        combinedSeqs.append(oneSeq.tolist())
+        hitsSeqList.append(oneSeq.tolist())
     
 
     # normalize data matrix with background fasta's mean and std
-    combinedSeqs = (np.array(combinedSeqs) - backgroundMean) / backgroundStd
-
-    # row normalization
-    normCombinedSeqs = corefunctions.rowNormalization(combinedSeqs)
+    querySeqList = (np.array(querySeqList) - backgroundMean) / backgroundStd
+    hitsSeqList = (np.array(hitsSeqList) - backgroundMean) / backgroundStd
 
 
     # seekr pearson score
-    seekrScoreMatrix = corefunctions.getSeekrScorePearson(normCombinedSeqs)
+    seekrScoreMatrix = corefunctions.getSeekrScorePearson(querySeqList, hitsSeqList)
 
     # extract seekr pearson score from matrix
     pearsonlist = seekrScoreMatrix.tolist()[0][1:]
+
+    pearsonlist = seekrScoreMatrix.tolist()[0]
+
+    print(pearsonlist)
 
     # calculate probability density
     probabilityDensityList = []

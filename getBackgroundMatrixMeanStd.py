@@ -45,16 +45,9 @@ if __name__ == '__main__':
 
     backgroundKmerDataMatrix = (backgroundKmerDataMatrix - backgroundMean) / backgroundStd
 
-    normBackground = corefunctions.rowNormalization(backgroundKmerDataMatrix)
-    
+    backgroundseekrScoreMatrix = corefunctions.getSeekrScorePearson(backgroundKmerDataMatrix, backgroundKmerDataMatrix)
+
     del backgroundKmerDataMatrix
-    gc.collect()
-
-    backgroundseekrScoreMatrix = corefunctions.getSeekrScorePearson(normBackground)
-
-    
-
-    del normBackground
     gc.collect()
 
     # get only the upper triangle of the matrix

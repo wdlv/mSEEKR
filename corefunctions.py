@@ -53,18 +53,25 @@ def getSeqsKmerProcessedCounts(seqs, k, alphabet):
 #     return oneSeqPearCorr
 
 '''
-The following function rowNormalization and getSeekrScorePearson is using the same strategy as the method used in seekr package
+The following function getSeekrScorePearson is using the same strategy as the method used in seekr package
 '''
 
-def rowNormalization(inputSeqs):
+# def rowNormalization(inputSeqs):
 
-    inputSeqs = (inputSeqs.T - np.mean(inputSeqs, axis=1)).T
-    inputSeqs = (inputSeqs.T / np.std(inputSeqs, axis=1)).T
+#     inputSeqs = (inputSeqs.T - np.mean(inputSeqs, axis=1)).T
+#     inputSeqs = (inputSeqs.T / np.std(inputSeqs, axis=1)).T
 
-    return inputSeqs
+#     return inputSeqs
 
-def getSeekrScorePearson(inputMatrix):
-    return np.inner(inputMatrix, inputMatrix) / inputMatrix.shape[1]
+def getSeekrScorePearson(inputSeqs1, inputSeqs2):
+    # conduct row normalization to get normalized matrix
+    inputSeqs1 = (inputSeqs1.T - np.mean(inputSeqs1, axis=1)).T
+    inputSeqs1 = (inputSeqs1.T / np.std(inputSeqs1, axis=1)).T
+    inputSeqs2 = (inputSeqs2.T - np.mean(inputSeqs2, axis=1)).T
+    inputSeqs2 = (inputSeqs2.T / np.std(inputSeqs2, axis=1)).T
+    
+    # seekr's pearson
+    return np.inner(inputSeqs1, inputSeqs2) / inputSeqs1.shape[1]
 
 
 '''
