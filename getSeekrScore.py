@@ -84,16 +84,20 @@ if __name__ == '__main__':
         querySeq = corefunctions.getSeqsKmerProcessedCounts([seqs], kVals, alphabet)[0]
     querySeq = corefunctions.getSeqsKmerProcessedCounts(seqs, kVals, alphabet)[0]
 
+    querySeqList = [querySeq.tolist()]
 
     # read in mSEEKR output dataframe
     minlength = int(args.minSeqLength)
 
     mseekrdf = pd.read_csv(args.mSEEKRdataframeDir, sep="\t")
 
+    # convert all letters to uppercase
+    mseekrdf['Sequence'] = [x.upper() for x in mseekrdf['Sequence']]
+
     hitsSeqs = [x for x in mseekrdf['Sequence'] if len(x)>=minlength]
+
     mseekrdf = mseekrdf[mseekrdf['Sequence'].isin(hitsSeqs)]
 
-    querySeqList = [querySeq.tolist()]
     hitsSeqList = []
 
     for singleSeq in hitsSeqs:
@@ -110,11 +114,7 @@ if __name__ == '__main__':
     seekrScoreMatrix = corefunctions.getSeekrScorePearson(querySeqList, hitsSeqList)
 
     # extract seekr pearson score from matrix
-    pearsonlist = seekrScoreMatrix.tolist()[0][1:]
-
     pearsonlist = seekrScoreMatrix.tolist()[0]
-
-    print(pearsonlist)
 
     # calculate probability density
     probabilityDensityList = []
@@ -122,13 +122,6 @@ if __name__ == '__main__':
     for r in pearsonlist:
         currentProbabilityDensity = stats.norm.pdf(r, loc=bgMatrixMean, scale=bgMatrixStd)
         probabilityDensityList.append(currentProbabilityDensity)
-
-    # # iterate each hits and get each's pearson correlation score
-    # queryNormSeq = normSeqs[0]
-    # for OneNormSeq in normSeqs[1:]:
-
-    #     onePearCorr = getPearsonCorrelation(OneNormSeq, queryNormSeq, backgroundMean, backgroundStd)
-    #     pearsonlist.append(onePearCorr)
     
     # add pearsonC list to mSEEKR dataframe
     mseekrdf['seekrPearsonCorr'] = pearsonlist
